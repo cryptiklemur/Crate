@@ -2,6 +2,7 @@
   "name": "crate",
   "main": "dist/index.js",
   "author": "Aaron Scherer <aequasi@gmail.com>",
+  "version": "0.1.0",
   "dependencies": {
     "core-decorators": "^0.1.5",
     "lodash-decorators": "^0.4.11"
