@@ -20,10 +20,27 @@ module.exports = function (grunt) {
                 ]
             }
         },
+        browserify: {
+            dist: {
+                files:   {
+                    'crate.js': ['dist/**/*.js']
+                },
+                options: {
+                    transform: [["babelify", {"stage": ["0"]}]]
+                }
+            }
+        },
+        uglify: {
+            dist: {
+                files: {
+                    './crate.min.js': ['./crate.js']
+                }
+            }
+        },
         watch:     {
             js: {
                 files: ['src/**/*.js', 'test/**/*.js'],
-                tasks: ['default'],
+                tasks: ['default']
             }
         },
         mochaTest: {
@@ -41,6 +58,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('js', ['babel']);
 
-    grunt.registerTask('default', ['js', 'mochaTest']);
+    grunt.registerTask('default', ['js', 'mochaTest', 'browserify', 'uglify']);
     grunt.registerTask('dev', ['default', 'focus:dev']);
 };
