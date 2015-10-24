@@ -10,3 +10,14 @@ by hand.
 
 ### Install
 
+Install with NPM
+
+```
+npm install --save crate-js
+```
+
+Then just require it.
+
+### Usage
+
+##### Todo 

@@ -27,7 +27,7 @@ export default class ContainerBuilder {
         return new Container(services, this.parameterBag);
     }
 
-    buildFromJson(json) {
+    static buildFromJson(json) {
         if (json.parameters !== undefined) {
             this.buildParametersFromJson(json.parameters);
         }
