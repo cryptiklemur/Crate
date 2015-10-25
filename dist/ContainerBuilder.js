@@ -30,6 +30,7 @@ var ContainerBuilder = (function () {
         _classCallCheck(this, ContainerBuilder);
 
         this.frozen = false;
+        this.services = {};
         this.definitions = {};
         this.parameterBag = null;
 
@@ -49,9 +50,9 @@ var ContainerBuilder = (function () {
     }, {
         key: 'build',
         value: function build() {
-            var services = this.buildDefinitions();
+            this.buildDefinitions();
 
-            return new _Container2['default'](services, this.parameterBag);
+            return new _Container2['default'](this.services, this.parameterBag);
         }
     }, {
         key: 'buildDefinitions',
@@ -60,8 +61,7 @@ var ContainerBuilder = (function () {
                 throw Error("Container has already been built.");
             }
 
-            var services = {},
-                definitions = [];
+            var definitions = [];
 
             for (var _name in this.definitions) {
                 if (this.definitions.hasOwnProperty(_name)) {
@@ -83,7 +83,7 @@ var ContainerBuilder = (function () {
                     if (this.argumentsInitialized(_name2, definition)) {
                         loops = 0;
 
-                        services[_name2] = new (_bind.apply(definition.module, [null].concat(_toConsumableArray(this.prepareArguments(definition.classArguments)))))();
+                        this.services[_name2] = new (_bind.apply(definition.module, [null].concat(_toConsumableArray(this.prepareArguments(definition.classArguments)))))();
 
                         definitions.splice(_index, 1);
                     }
@@ -93,8 +93,6 @@ var ContainerBuilder = (function () {
             }
 
             this.frozen = true;
-
-            return services;
         }
     }, {
         key: 'argumentsInitialized',
@@ -257,9 +255,7 @@ var ContainerBuilder = (function () {
                 builder.buildServicesFromJson(json.services);
             }
 
-            var services = builder.buildDefinitions();
-
-            return new _Container2['default'](services, builder.parameterBag);
+            return builder.build();
         }
     }]);
 

@@ -5,6 +5,8 @@ import Container from './Container';
 export default class ContainerBuilder {
     frozen = false;
 
+    services = {};
+
     definitions = {};
 
     parameterBag = null;

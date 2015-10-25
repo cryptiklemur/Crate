@@ -12,12 +12,13 @@ var Container = (function () {
     function Container(services, parameterBag) {
         _classCallCheck(this, Container);
 
-        this.frozen = false;
         this.services = {};
         this.parameterBag = null;
 
         this.services = services;
         this.parameterBag = parameterBag;
+
+        Object.freeze(this);
     }
 
     _createClass(Container, [{
