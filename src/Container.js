@@ -3,11 +3,20 @@ export default class Container {
 
     parameterBag = null;
 
-    constructor(services, parameterBag) {
-        this.services = services;
+    frozen = false;
+
+    build(services, parameterBag) {
+        if (this.frozen) {
+            throw Error("Cannot build the container. Already built.");
+        }
+
+        this.services     = services;
         this.parameterBag = parameterBag;
 
+        this.frozen = true;
         Object.freeze(this);
+
+        return this;
     }
 
     addParameter(name, value) {

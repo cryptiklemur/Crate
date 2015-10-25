@@ -35,6 +35,7 @@ var ContainerBuilder = (function () {
         this.parameterBag = null;
 
         this.parameterBag = new _ParameterBag2['default']([]);
+        this.container = new _Container2['default']();
     }
 
     _createClass(ContainerBuilder, [{
@@ -52,7 +53,7 @@ var ContainerBuilder = (function () {
         value: function build() {
             this.buildDefinitions();
 
-            return new _Container2['default'](this.services, this.parameterBag);
+            return this.container.build(this.services, this.parameterBag);
         }
     }, {
         key: 'buildDefinitions',
@@ -142,6 +143,9 @@ var ContainerBuilder = (function () {
             if (typeof arg === 'string') {
                 if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
                     return this.getParameter(arg.substring(1).slice(0, -1));
+                }
+                if (arg === '$container') {
+                    return this.container;
                 }
             }
 

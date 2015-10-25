@@ -13,6 +13,7 @@ export default class ContainerBuilder {
 
     constructor() {
         this.parameterBag = new ParameterBag([]);
+        this.container    = new Container();
     }
 
     isFrozen() {
@@ -26,7 +27,7 @@ export default class ContainerBuilder {
     build() {
         this.buildDefinitions();
 
-        return new Container(this.services, this.parameterBag);
+        return this.container.build(this.services, this.parameterBag);
     }
 
     static buildFromJson(json) {
@@ -128,6 +129,9 @@ export default class ContainerBuilder {
         if (typeof arg === 'string') {
             if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
                 return this.getParameter(arg.substring(1).slice(0, -1));
+            }
+            if (arg === '$container') {
+                return this.container;
             }
         }
 

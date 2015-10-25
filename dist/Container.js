@@ -9,19 +9,30 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Container = (function () {
-    function Container(services, parameterBag) {
+    function Container() {
         _classCallCheck(this, Container);
 
         this.services = {};
         this.parameterBag = null;
-
-        this.services = services;
-        this.parameterBag = parameterBag;
-
-        Object.freeze(this);
+        this.frozen = false;
     }
 
     _createClass(Container, [{
+        key: "build",
+        value: function build(services, parameterBag) {
+            if (this.frozen) {
+                throw Error("Cannot build the container. Already built.");
+            }
+
+            this.services = services;
+            this.parameterBag = parameterBag;
+
+            this.frozen = true;
+            Object.freeze(this);
+
+            return this;
+        }
+    }, {
         key: "addParameter",
         value: function addParameter(name, value) {
             this.parameterBag.set(name, value);
