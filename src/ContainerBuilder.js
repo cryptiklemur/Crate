@@ -128,13 +128,16 @@ export default class ContainerBuilder {
         if (typeof arg === 'string') {
             if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
                 return this.getParameter(arg.substring(1).slice(0, -1));
-
             }
         }
 
         if (typeof arg === 'object') {
             if (arg.$ref !== undefined) {
-                return this.services[arg.$ref];
+                if (typeof arg.$ref === 'string') {
+                    return this.services[arg.$ref];
+                } else {
+                    return arg.$ref;
+                }
             }
         }
 
