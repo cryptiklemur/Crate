@@ -1,22 +1,22 @@
 const assert = require('assert');
 
-const Definition = require('../dist/Definition');
+const Definition       = require('../dist/Definition');
 const ContainerBuilder = require('../dist/ContainerBuilder');
-const ParameterBag = require('../dist/ParameterBag');
+const ParameterBag     = require('../dist/ParameterBag');
 
-const validService = require('./mock/ValidService');
+const validService        = require('./mock/ValidService');
 const firstInvalidService = require('./mock/firstInvalidService');
 
-describe("Ensure Definition class works.", function() {
-    describe("#constructor", function() {
-        it('should have a module and classArguments', function() {
+describe("Ensure Definition class works.", function () {
+    describe("#constructor", function () {
+        it('should have a module and classArguments', function () {
             var definition = new Definition(validService, ['some', 'arguments']);
             assert.equal(definition.module, validService);
             assert.deepEqual(definition.classArguments, ['some', 'arguments']);
         });
     });
 
-    describe('#setmodule', function() {
+    describe('#setmodule', function () {
         it('should be able to change its module', function () {
             var definition = new Definition(validService, ['some', 'arguments']);
             definition.setModule(firstInvalidService);
@@ -24,7 +24,7 @@ describe("Ensure Definition class works.", function() {
         });
     });
 
-    describe('#addArgument', function() {
+    describe('#addArgument', function () {
         it('should be able to add an argument', function () {
             var definition = new Definition(validService, ['some', 'arguments']);
             definition.addArgument('test');
@@ -32,7 +32,7 @@ describe("Ensure Definition class works.", function() {
         });
     });
 
-    describe('#removeArgument', function() {
+    describe('#removeArgument', function () {
         it('should be able to remove an argument', function () {
             var definition = new Definition(validService, ['some', 'arguments']);
             definition.removeArgument(2);
@@ -40,7 +40,7 @@ describe("Ensure Definition class works.", function() {
         });
     });
 
-    describe('#setArgument', function() {
+    describe('#setArgument', function () {
         it('should be able to replace an argument', function () {
             var definition = new Definition(validService, ['some', 'arguments']);
             definition.setArgument(0, 'test');
@@ -49,7 +49,7 @@ describe("Ensure Definition class works.", function() {
     });
 });
 
-describe("Ensure ParameterBag class works.", function() {
+describe("Ensure ParameterBag class works.", function () {
     describe('#constructor', function () {
         it('should initialize the bag as an array', function () {
             var parameterBag = new ParameterBag();
@@ -99,9 +99,9 @@ describe("Ensure ParameterBag class works.", function() {
     });
 });
 
-describe("Ensure ContainerBuilder class works.", function() {
-    describe('#constructor', function() {
-        it('should create a parameter bag during construction', function() {
+describe("Ensure ContainerBuilder class works.", function () {
+    describe('#constructor', function () {
+        it('should create a parameter bag during construction', function () {
             var containerBuilder = new ContainerBuilder();
             assert.notEqual(undefined, containerBuilder.parameterBag);
             assert.notEqual(undefined, containerBuilder.getParameters());
@@ -159,8 +159,8 @@ describe("Ensure ContainerBuilder class works.", function() {
         });
     });
 
-    describe('#isFrozen', function() {
-        it('should not be able to add a definition, if the container is frozen', function() {
+    describe('#isFrozen', function () {
+        it('should not be able to add a definition, if the container is frozen', function () {
             var containerBuilder = new ContainerBuilder();
             var definition       = new Definition('../dist/Definition', ['some', 'arguments']);
 
@@ -190,8 +190,7 @@ describe("Ensure ContainerBuilder class works.", function() {
 
     describe('#buildFromJson', function () {
         it('should be able to build a container from a json config', function () {
-            var containerBuilder = new ContainerBuilder(), container, json;
-            container            = containerBuilder.buildFromJson(require('./mock/validConfig'));
+            var container = ContainerBuilder.buildFromJson(require('./mock/validConfig'));
 
             assert.equal('validService', container.get('validService').name);
         });

@@ -54,21 +54,6 @@ var ContainerBuilder = (function () {
             return new _Container2['default'](services, this.parameterBag);
         }
     }, {
-        key: 'buildFromJson',
-        value: function buildFromJson(json) {
-            if (json.parameters !== undefined) {
-                this.buildParametersFromJson(json.parameters);
-            }
-
-            if (json.services !== undefined) {
-                this.buildServicesFromJson(json.services);
-            }
-
-            var services = this.buildDefinitions();
-
-            return new _Container2['default'](services, this.parameterBag);
-        }
-    }, {
         key: 'buildDefinitions',
         value: function buildDefinitions() {
             if (this.isFrozen()) {
@@ -258,6 +243,23 @@ var ContainerBuilder = (function () {
         key: 'get',
         value: function get(id) {
             return this.getService(id);
+        }
+    }], [{
+        key: 'buildFromJson',
+        value: function buildFromJson(json) {
+            var builder = new ContainerBuilder();
+
+            if (json.parameters !== undefined) {
+                builder.buildParametersFromJson(json.parameters);
+            }
+
+            if (json.services !== undefined) {
+                builder.buildServicesFromJson(json.services);
+            }
+
+            var services = builder.buildDefinitions();
+
+            return new _Container2['default'](services, builder.parameterBag);
         }
     }]);
 

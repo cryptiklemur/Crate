@@ -58,6 +58,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('js', ['babel']);
 
-    grunt.registerTask('default', ['js', 'mochaTest', 'browserify', 'uglify']);
+    grunt.registerTask('default', ['js', 'mochaTest']);
     grunt.registerTask('dev', ['default', 'focus:dev']);
 };

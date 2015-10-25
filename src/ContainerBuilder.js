@@ -28,17 +28,19 @@ export default class ContainerBuilder {
     }
 
     static buildFromJson(json) {
+        let builder = new ContainerBuilder();
+
         if (json.parameters !== undefined) {
-            this.buildParametersFromJson(json.parameters);
+            builder.buildParametersFromJson(json.parameters);
         }
 
         if (json.services !== undefined) {
-            this.buildServicesFromJson(json.services)
+            builder.buildServicesFromJson(json.services)
         }
 
-        let services = this.buildDefinitions();
+        let services = builder.buildDefinitions();
 
-        return new Container(services, this.parameterBag);
+        return new Container(services, builder.parameterBag);
     }
 
     buildDefinitions() {
