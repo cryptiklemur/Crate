@@ -22,9 +22,9 @@ export default class ContainerBuilder {
     }
 
     build() {
-        let services = this.buildDefinitions();
+        this.buildDefinitions();
 
-        return new Container(services, this.parameterBag);
+        return new Container(this.services, this.parameterBag);
     }
 
     static buildFromJson(json) {
@@ -38,9 +38,7 @@ export default class ContainerBuilder {
             builder.buildServicesFromJson(json.services)
         }
 
-        let services = builder.buildDefinitions();
-
-        return new Container(services, builder.parameterBag);
+        return builder.build();
     }
 
     buildDefinitions() {
@@ -48,7 +46,7 @@ export default class ContainerBuilder {
             throw Error("Container has already been built.");
         }
 
-        let services = {}, definitions = [];
+        let definitions = [];
 
         for (let name in this.definitions) {
             if (this.definitions.hasOwnProperty(name)) {
@@ -70,7 +68,9 @@ export default class ContainerBuilder {
                 if (this.argumentsInitialized(name, definition)) {
                     loops = 0;
 
-                    services[name] = new definition.module(...this.prepareArguments(definition.classArguments));
+                    this.services[name] = new definition.module(
+                        ...this.prepareArguments(definition.classArguments)
+                    );
 
                     definitions.splice(index, 1);
                 }
@@ -80,8 +80,6 @@ export default class ContainerBuilder {
         }
 
         this.frozen = true;
-
-        return services;
     }
 
     argumentsInitialized(name, definition) {

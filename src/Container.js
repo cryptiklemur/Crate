@@ -1,6 +1,4 @@
 export default class Container {
-    frozen = false;
-
     services = {};
 
     parameterBag = null;
@@ -8,6 +6,8 @@ export default class Container {
     constructor(services, parameterBag) {
         this.services = services;
         this.parameterBag = parameterBag;
+
+        Object.freeze(this);
     }
 
     addParameter(name, value) {
