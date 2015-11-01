@@ -214,7 +214,7 @@ var ContainerBuilder = (function () {
                 }
 
                 if (info.module !== undefined) {
-                    this.setDefinition(_name3, new _Definition2['default'](info.module, info.args));
+                    this.setDefinition(_name3, new _Definition2['default'](info.module, info.args, info.tags));
                 }
             }
         }
@@ -273,6 +273,11 @@ var ContainerBuilder = (function () {
     }], [{
         key: 'buildFromJson',
         value: function buildFromJson(json) {
+            return ContainerBuilder.prepareFromJson(json).build();
+        }
+    }, {
+        key: 'prepareFromJson',
+        value: function prepareFromJson(json) {
             var builder = new ContainerBuilder();
 
             if (json.parameters !== undefined) {
@@ -283,7 +288,7 @@ var ContainerBuilder = (function () {
                 builder.buildServicesFromJson(json.services);
             }
 
-            return builder.build();
+            return builder;
         }
     }]);
 

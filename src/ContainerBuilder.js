@@ -33,6 +33,10 @@ export default class ContainerBuilder {
     }
 
     static buildFromJson(json) {
+        return ContainerBuilder.prepareFromJson(json).build();
+    }
+
+    static prepareFromJson(json) {
         let builder = new ContainerBuilder();
 
         if (json.parameters !== undefined) {
@@ -43,7 +47,7 @@ export default class ContainerBuilder {
             builder.buildServicesFromJson(json.services)
         }
 
-        return builder.build();
+        return builder;
     }
 
     buildDefinitions() {
@@ -196,7 +200,7 @@ export default class ContainerBuilder {
             }
 
             if (info.module !== undefined) {
-                this.setDefinition(name, new Definition(info.module, info.args));
+                this.setDefinition(name, new Definition(info.module, info.args, info.tags));
             }
         }
     }
