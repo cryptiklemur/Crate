@@ -3,15 +3,18 @@ export default class Container {
 
     parameterBag = null;
 
+    tags = {};
+
     frozen = false;
 
-    build(services, parameterBag) {
+    build(services, parameterBag, tags) {
         if (this.frozen) {
             throw Error("Cannot build the container. Already built.");
         }
 
         this.services     = services;
         this.parameterBag = parameterBag;
+        this.tags         = tags;
 
         this.frozen = true;
         Object.freeze(this);
@@ -45,5 +48,9 @@ export default class Container {
 
     get(id) {
         return this.getService(id);
+    }
+
+    findTaggedServiceIds(name) {
+        return this.tags[name];
     }
 }

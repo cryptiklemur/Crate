@@ -32,6 +32,7 @@ var ContainerBuilder = (function () {
         this.frozen = false;
         this.services = {};
         this.definitions = {};
+        this.tags = {};
         this.parameterBag = null;
 
         this.parameterBag = new _ParameterBag2['default']([]);
@@ -53,7 +54,7 @@ var ContainerBuilder = (function () {
         value: function build() {
             this.buildDefinitions();
 
-            return this.container.build(this.services, this.parameterBag);
+            return this.container.build(this.services, this.parameterBag, this.tags);
         }
     }, {
         key: 'buildDefinitions',
@@ -86,6 +87,8 @@ var ContainerBuilder = (function () {
 
                         this.services[_name2] = new (_bind.apply(definition.module, [null].concat(_toConsumableArray(this.prepareArguments(definition.classArguments)))))();
 
+                        this.addTags(_name2, definition.tags);
+
                         definitions.splice(_index, 1);
                     }
                 }
@@ -96,6 +99,23 @@ var ContainerBuilder = (function () {
             this.frozen = true;
         }
     }, {
+        key: 'addTags',
+        value: function addTags(serviceName, tags) {
+            for (var _index2 in tags) {
+                if (!tags.hasOwnProperty(_index2)) {
+                    continue;
+                }
+
+                var tag = tags[_index2];
+
+                if (this.tags[tag] === undefined) {
+                    this.tags[tag] = [];
+                }
+
+                this.tags[tag].push(serviceName);
+            }
+        }
+    }, {
         key: 'argumentsInitialized',
         value: function argumentsInitialized(name, definition) {
             if (definition.classArguments.length < 1) {
@@ -103,12 +123,12 @@ var ContainerBuilder = (function () {
             }
 
             var args = definition.classArguments;
-            for (var _index2 in args) {
-                if (!args.hasOwnProperty(_index2)) {
+            for (var _index3 in args) {
+                if (!args.hasOwnProperty(_index3)) {
                     continue;
                 }
 
-                var arg = args[_index2];
+                var arg = args[_index3];
                 if (arg.$ref === undefined) {
                     continue;
                 }
@@ -123,12 +143,12 @@ var ContainerBuilder = (function () {
     }, {
         key: 'prepareArguments',
         value: function prepareArguments(args) {
-            for (var _index3 in args) {
-                if (!args.hasOwnProperty(_index3)) {
+            for (var _index4 in args) {
+                if (!args.hasOwnProperty(_index4)) {
                     continue;
                 }
 
-                args[_index3] = this.parseArgument(args[_index3]);
+                args[_index4] = this.parseArgument(args[_index4]);
             }
 
             return args;

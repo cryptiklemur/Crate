@@ -25,16 +25,26 @@ var Definition = (function () {
         set: function set(value) {
             this._arguments = value;
         }
+    }, {
+        key: 'tags',
+        get: function get() {
+            return this._tags || [];
+        },
+        set: function set(value) {
+            this._tags = value;
+        }
     }]);
 
     function Definition() {
         var module = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
         var classArguments = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+        var tags = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
         _classCallCheck(this, Definition);
 
         this.module = module;
         this.classArguments = classArguments;
+        this.tags = tags;
     }
 
     _createClass(Definition, [{
@@ -69,6 +79,21 @@ var Definition = (function () {
         key: 'setArguments',
         value: function setArguments(classArguments) {
             this.classArguments = classArguments;
+        }
+    }, {
+        key: 'setTags',
+        value: function setTags(tags) {
+            this.tags = tags;
+        }
+    }, {
+        key: 'getTags',
+        value: function getTags() {
+            return this.tags;
+        }
+    }, {
+        key: 'addTag',
+        value: function addTag(name) {
+            this.tags.push(name);
         }
     }]);
 

@@ -9,6 +9,8 @@ export default class ContainerBuilder {
 
     definitions = {};
 
+    tags = {};
+
     parameterBag = null;
 
     constructor() {
@@ -27,7 +29,7 @@ export default class ContainerBuilder {
     build() {
         this.buildDefinitions();
 
-        return this.container.build(this.services, this.parameterBag);
+        return this.container.build(this.services, this.parameterBag, this.tags);
     }
 
     static buildFromJson(json) {
@@ -75,6 +77,8 @@ export default class ContainerBuilder {
                         ...this.prepareArguments(definition.classArguments)
                     );
 
+                    this.addTags(name, definition.tags);
+
                     definitions.splice(index, 1);
                 }
             }
@@ -83,6 +87,22 @@ export default class ContainerBuilder {
         }
 
         this.frozen = true;
+    }
+
+    addTags(serviceName, tags) {
+        for (let index in tags) {
+            if (!tags.hasOwnProperty(index)) {
+                continue;
+            }
+
+            let tag = tags[index];
+
+            if (this.tags[tag] === undefined) {
+                this.tags[tag] = [];
+            }
+
+            this.tags[tag].push(serviceName);
+        }
     }
 
     argumentsInitialized(name, definition) {

@@ -14,18 +14,20 @@ var Container = (function () {
 
         this.services = {};
         this.parameterBag = null;
+        this.tags = {};
         this.frozen = false;
     }
 
     _createClass(Container, [{
         key: "build",
-        value: function build(services, parameterBag) {
+        value: function build(services, parameterBag, tags) {
             if (this.frozen) {
                 throw Error("Cannot build the container. Already built.");
             }
 
             this.services = services;
             this.parameterBag = parameterBag;
+            this.tags = tags;
 
             this.frozen = true;
             Object.freeze(this);
@@ -65,6 +67,11 @@ var Container = (function () {
         key: "get",
         value: function get(id) {
             return this.getService(id);
+        }
+    }, {
+        key: "findTaggedServiceIds",
+        value: function findTaggedServiceIds(name) {
+            return this.tags[name];
         }
     }]);
 
