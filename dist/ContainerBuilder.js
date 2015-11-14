@@ -179,8 +179,7 @@ var ContainerBuilder = (function () {
                 }
             }
 
-            console.error(arg);
-            throw Error("Passed arg is not a valid argument");
+            return arg;
         }
     }, {
         key: 'buildParametersFromJson',

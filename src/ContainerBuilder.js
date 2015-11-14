@@ -167,10 +167,10 @@ export default class ContainerBuilder {
                     return arg.$ref;
                 }
             }
+
         }
 
-        console.error(arg);
-        throw Error("Passed arg is not a valid argument");
+        return arg;
     }
 
     buildParametersFromJson(parameters, prefix = '') {
