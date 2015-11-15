@@ -129,7 +129,7 @@ var ContainerBuilder = (function () {
                 }
 
                 var arg = args[_index3];
-                if (arg.$ref === undefined) {
+                if (arg === null || arg.$ref === undefined) {
                     continue;
                 }
 

@@ -121,7 +121,7 @@ export default class ContainerBuilder {
             }
 
             let arg = args[index];
-            if (arg.$ref === undefined) {
+            if (arg === null || arg.$ref === undefined) {
                 continue;
             }
 
