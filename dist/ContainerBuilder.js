@@ -169,7 +169,7 @@ var ContainerBuilder = (function () {
                 }
             }
 
-            if (typeof arg === 'object') {
+            if (typeof arg === 'object' && arg !== null) {
                 if (arg.$ref !== undefined) {
                     if (typeof arg.$ref === 'string') {
                         return this.services[arg.$ref];
