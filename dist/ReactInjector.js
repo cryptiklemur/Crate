@@ -40,7 +40,7 @@ var ReactInjector = (function () {
                     var dep = type.dependencies[_name];
 
                     // If its a parameter
-                    if (dep.indexOf('%') === 0 && arg.substring(1).indexOf('%') === dep.length - 2) {
+                    if (dep.indexOf('%') === 0 && dep.substring(1).indexOf('%') === dep.length - 2) {
                         props.deps[_name] = container.getParameter(dep.substring(1).slice(0, -1));
                     }
 
