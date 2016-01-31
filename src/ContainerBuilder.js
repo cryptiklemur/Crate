@@ -187,6 +187,7 @@ export default class ContainerBuilder {
             if (parameters.hasOwnProperty(key)) {
                 let value = parameters[key];
                 if (value !== 'null' && typeof value === 'object') {
+                    this.addParameter(prefix + key, value);
                     this.buildParametersFromJson(value, key + '.');
                     continue;
                 }
