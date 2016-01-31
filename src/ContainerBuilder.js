@@ -159,7 +159,7 @@ export default class ContainerBuilder {
                 return this.getParameter(arg.substring(1).slice(0, -1));
             }
             if (arg === '$container') {
-                return function() { return this; };
+                return this.container;
             }
         }
 
