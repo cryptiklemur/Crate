@@ -47,6 +47,11 @@ var Container = (function () {
             return this.parameterBag.get(name);
         }
     }, {
+        key: "hasParameter",
+        value: function hasParameter(name) {
+            return this.parameterBag.has(name);
+        }
+    }, {
         key: "removeParameter",
         value: function removeParameter(name) {
             this.parameterBag.remove(name);
@@ -67,6 +72,16 @@ var Container = (function () {
         key: "get",
         value: function get(id) {
             return this.getService(id);
+        }
+    }, {
+        key: "hasService",
+        value: function hasService(id) {
+            return this.services[id] !== undefined;
+        }
+    }, {
+        key: "has",
+        value: function has(id) {
+            return this.hasService(id);
         }
     }, {
         key: "findTaggedServiceIds",
