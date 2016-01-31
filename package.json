@@ -2,7 +2,7 @@
   "name": "crate-js",
   "main": "dist/index.js",
   "author": "Aaron Scherer <aequasi@gmail.com>",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A Depdencny injection library for javascript",
   "repository": {
     "type": "git",
