@@ -169,7 +169,9 @@ var ContainerBuilder = (function () {
                     return this.getParameter(arg.substring(1).slice(0, -1));
                 }
                 if (arg === '$container') {
-                    return this.container;
+                    return function () {
+                        return this;
+                    };
                 }
             }
 
