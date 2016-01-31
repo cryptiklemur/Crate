@@ -156,7 +156,12 @@ export default class ContainerBuilder {
 
         if (typeof arg === 'string') {
             if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
-                return this.getParameter(arg.substring(1).slice(0, -1));
+                let name = arg.substring(1).slice(0, -1);
+                if (!this.hasParameter(name)) {
+                    throw new Error("Parameter doesn't exist: " + name);
+                }
+
+                return this.getParameter(name);
             }
             if (arg === '$container') {
                 return this.container;
@@ -181,7 +186,7 @@ export default class ContainerBuilder {
         for (let key in parameters) {
             if (parameters.hasOwnProperty(key)) {
                 let value = parameters[key];
-                if (typeof value !== 'string') {
+                if (value !== 'null' && typeof value === 'object') {
                     this.buildParametersFromJson(value, key + '.');
                     continue;
                 }
@@ -229,6 +234,10 @@ export default class ContainerBuilder {
 
     getParameter(name) {
         return this.parameterBag.get(name);
+    }
+
+    hasParameter(name) {
+        return this.parameterBag.has(name);
     }
 
     removeParameter(name) {

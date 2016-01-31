@@ -166,7 +166,12 @@ var ContainerBuilder = (function () {
 
             if (typeof arg === 'string') {
                 if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
-                    return this.getParameter(arg.substring(1).slice(0, -1));
+                    var _name3 = arg.substring(1).slice(0, -1);
+                    if (!this.hasParameter(_name3)) {
+                        throw new Error("Parameter doesn't exist: " + _name3);
+                    }
+
+                    return this.getParameter(_name3);
                 }
                 if (arg === '$container') {
                     return this.container;
@@ -193,7 +198,7 @@ var ContainerBuilder = (function () {
             for (var key in parameters) {
                 if (parameters.hasOwnProperty(key)) {
                     var value = parameters[key];
-                    if (typeof value !== 'string') {
+                    if (value !== 'null' && typeof value === 'object') {
                         this.buildParametersFromJson(value, key + '.');
                         continue;
                     }
@@ -205,19 +210,19 @@ var ContainerBuilder = (function () {
     }, {
         key: 'buildServicesFromJson',
         value: function buildServicesFromJson(services) {
-            for (var _name3 in services) {
-                if (!services.hasOwnProperty(_name3)) {
+            for (var _name4 in services) {
+                if (!services.hasOwnProperty(_name4)) {
                     continue;
                 }
 
-                var info = services[_name3];
+                var info = services[_name4];
                 if (info.reference !== undefined) {
-                    this.services[_name3] = info.reference;
+                    this.services[_name4] = info.reference;
                     continue;
                 }
 
                 if (info.module !== undefined) {
-                    this.setDefinition(_name3, new _Definition2['default'](info.module, info.args, info.tags));
+                    this.setDefinition(_name4, new _Definition2['default'](info.module, info.args, info.tags));
                 }
             }
         }
@@ -246,6 +251,11 @@ var ContainerBuilder = (function () {
         key: 'getParameter',
         value: function getParameter(name) {
             return this.parameterBag.get(name);
+        }
+    }, {
+        key: 'hasParameter',
+        value: function hasParameter(name) {
+            return this.parameterBag.has(name);
         }
     }, {
         key: 'removeParameter',
