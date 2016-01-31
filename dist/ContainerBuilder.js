@@ -199,6 +199,7 @@ var ContainerBuilder = (function () {
                 if (parameters.hasOwnProperty(key)) {
                     var value = parameters[key];
                     if (value !== 'null' && typeof value === 'object') {
+                        this.addParameter(prefix + key, value);
                         this.buildParametersFromJson(value, key + '.');
                         continue;
                     }
