@@ -77,6 +77,10 @@ export default class ContainerBuilder {
                 if (this.argumentsInitialized(name, definition)) {
                     loops = 0;
 
+                    if (typeof definition.module !== 'function') {
+                        throw new Error(`Module for definition '${name}' is not a valid module.`);
+                    }
+
                     this.services[name] = new definition.module(
                         ...this.prepareArguments(definition.classArguments)
                     );

@@ -85,6 +85,10 @@ var ContainerBuilder = (function () {
                     if (this.argumentsInitialized(_name2, definition)) {
                         loops = 0;
 
+                        if (typeof definition.module !== 'function') {
+                            throw new Error('Module for definition \'' + _name2 + '\' is not a valid module.');
+                        }
+
                         this.services[_name2] = new (_bind.apply(definition.module, [null].concat(_toConsumableArray(this.prepareArguments(definition.classArguments)))))();
 
                         this.addTags(_name2, definition.tags);
