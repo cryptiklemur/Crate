@@ -32,6 +32,10 @@ export default class Container {
         return this.parameterBag.get(name);
     }
 
+    hasParameter(name) {
+        return this.parameterBag.has(name);
+    }
+
     removeParameter(name) {
         this.parameterBag.remove(name);
 
@@ -48,6 +52,14 @@ export default class Container {
 
     get(id) {
         return this.getService(id);
+    }
+
+    hasService(id) {
+        return this.services[id] !== undefined;
+    }
+
+    has(id) {
+        return this.hasService(id);
     }
 
     findTaggedServiceIds(name) {
