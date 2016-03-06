@@ -85,7 +85,7 @@ export default class ContainerBuilder {
 
         let loops = 0, removed = 0;
         while (definitions.length > 0) {
-            if (loops >= 50 && removed === 0) {
+            if (loops >= 150 && removed === 0) {
                 throw new Error(
                     "Possible circular reference detected: Check the service definition for: " +
                         JSON.stringify(definitions.map(definition => definition.name))
