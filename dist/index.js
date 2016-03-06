@@ -8,6 +8,8 @@ exports['default'] = {
     ContainerBuilder: require('./ContainerBuilder'),
     Definition: require('./Definition'),
     ParameterBag: require('./ParameterBag'),
+    AbstractLoader: require('./Loader/AbstractLoader'),
+    JsonLoader: require('./Loader/JsonLoader'),
     ReactInjector: require('./ReactInjector')
 };
 module.exports = exports['default'];

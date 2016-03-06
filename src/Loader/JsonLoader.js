@@ -2,6 +2,10 @@ import extend from 'extend';
 import AbstractLoader from './AbstractLoader';
 
 export default class JsonLoader extends AbstractLoader {
+    addJson(json) {
+        this.addFile(json);
+    }
+
     buildParameters() {
         let parameters = [];
         for (let index in this.files) {
