@@ -22,5 +22,8 @@
     "grunt-notify": "^0.4.1",
     "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.3"
+  },
+  "dependencies": {
+    "extend": "^3.0.0"
   }
 }

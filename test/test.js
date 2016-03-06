@@ -1,11 +1,11 @@
-const assert = require('assert');
-
-const Definition       = require('../dist/Definition');
-const ContainerBuilder = require('../dist/ContainerBuilder');
-const ParameterBag     = require('../dist/ParameterBag');
-
-const validService        = require('./mock/ValidService');
-const firstInvalidService = require('./mock/firstInvalidService');
+const assert              = require('assert'),
+      Definition          = require('../dist/Definition'),
+      ContainerBuilder    = require('../dist/ContainerBuilder'),
+      ParameterBag        = require('../dist/ParameterBag'),
+      AbstractLoader      = require('../dist/Loader/AbstractLoader'),
+      JsonLoader          = require('../dist/Loader/JsonLoader'),
+      validService        = require('./mock/ValidService'),
+      firstInvalidService = require('./mock/firstInvalidService');
 
 describe("Ensure Definition class works.", function () {
     describe("#constructor", function () {
@@ -106,6 +106,29 @@ describe("Ensure ContainerBuilder class works.", function () {
             assert.notEqual(undefined, containerBuilder.parameterBag);
             assert.notEqual(undefined, containerBuilder.getParameters());
         });
+
+        it('should create a loaders array during construction', function () {
+            var containerBuilder = new ContainerBuilder();
+            assert.notEqual(undefined, containerBuilder.loaders);
+        });
+    });
+
+    describe('#addLoader', function () {
+        it('should throw an error if anything but a loader is passed', function () {
+            var containerBuilder = new ContainerBuilder();
+            assert.throws(function() {
+                containerBuilder.addLoader('fake loader');
+            }, /Must pass an instance of AbstractLoader/);
+        });
+
+        it('should add a loader to the loaders array', function () {
+            var containerBuilder = new ContainerBuilder(),
+                loader           = new JsonLoader();
+
+            assert.equal(0, containerBuilder.loaders.length);
+            containerBuilder.addLoader(loader);
+            assert.equal(1, containerBuilder.loaders.length);
+        })
     });
 
     describe('#addParameter', function () {
@@ -161,8 +184,8 @@ describe("Ensure ContainerBuilder class works.", function () {
 
     describe('#isFrozen', function () {
         it('should not be able to add a definition, if the container is frozen', function () {
-            var containerBuilder = new ContainerBuilder();
-            var definition       = new Definition('../dist/Definition', ['some', 'arguments']);
+            var containerBuilder = new ContainerBuilder(),
+                definition       = new Definition('../dist/Definition', ['some', 'arguments']);
 
             containerBuilder.setDefinition('test', definition);
             assert.strictEqual(containerBuilder.getDefinition('test'), definition);
@@ -186,6 +209,22 @@ describe("Ensure ContainerBuilder class works.", function () {
 
             assert.equal('validService', container.get('validService').name);
         });
+        it('should be able to build a container with loaders', function () {
+            var containerBuilder = new ContainerBuilder(),
+                loader           = new JsonLoader(),
+                container;
+
+            loader.addFile(require('./mock/validConfig.js'));
+            loader.addFile(require('./mock/secondValidConfig.js'));
+            loader.addFile(require('./mock/thirdValidConfig.js'));
+            containerBuilder.addLoader(loader);
+            container = containerBuilder.build();
+
+            assert.equal('validService', container.get('validService').name);
+            assert.equal('secondValidService', container.get('secondValidService').name);
+            assert.equal('validParameter', container.getParameter('validParameter'));
+            assert.equal('anotherValidParameter', container.getParameter('anotherValidParameter'));
+        });
     });
 
     describe('#buildFromJson', function () {
@@ -198,14 +237,94 @@ describe("Ensure ContainerBuilder class works.", function () {
 
     describe('#invalidBuildFromJson', function () {
         it('should be fail to build a container, if there is a circular reference', function () {
-            var containerBuilder = new ContainerBuilder(), container, json;
+            var containerBuilder = new ContainerBuilder();
 
             try {
-                container = containerBuilder.buildFromJson(require('./mock/invalidConfig'));
+                containerBuilder.buildFromJson(require('./mock/invalidConfig'));
                 assert.fail("should've failed");
             } catch (err) {
                 assert.ok(true, "Error thrown");
             }
+        });
+    });
+});
+
+describe("Ensure JsonLoader class works.", function () {
+    describe('#constructor', function () {
+        it('should extend AbstractLoader', function () {
+            var loader = new JsonLoader();
+            assert.equal(true, loader instanceof AbstractLoader);
+        });
+
+        it('should create a files array during construction', function () {
+            var loader = new JsonLoader();
+            assert.notEqual(undefined, loader.files);
+        });
+    });
+
+    describe('#addFile', function () {
+        it('should error when you pass a string', function () {
+            var loader = new JsonLoader();
+            assert.throws(function () {
+                loader.addFile('random-string')
+            }, /Pass in a required file, not a string\./);
+        });
+
+        it('should add a file to the files array', function () {
+            var loader = new JsonLoader();
+            assert.equal(0, loader.files.length);
+            loader.addFile(require('./mock/validConfig.js'));
+            assert.equal(1, loader.files.length);
+            loader.addFile(require('./mock/secondValidConfig.js'));
+            assert.equal(2, loader.files.length);
+        });
+    });
+
+    describe('buildParameters', function () {
+        it('should return an array of parameters', function () {
+            var loader = new JsonLoader(), parameters;
+
+            loader.addFile(require('./mock/validConfig.js'));
+
+            parameters = loader.buildParameters();
+            assert.equal(0, Object.keys(parameters).length);
+
+            loader.addFile(require('./mock/secondValidConfig.js'));
+
+            parameters = loader.buildParameters();
+            assert.equal(1, Object.keys(parameters).length);
+            assert.notEqual(undefined, parameters.validParameter);
+            assert.equal('validParameter', parameters.validParameter);
+
+            loader.addFile(require('./mock/thirdValidConfig.js'));
+
+            parameters = loader.buildParameters();
+            assert.equal(2, Object.keys(parameters).length);
+            assert.notEqual(undefined, parameters.anotherValidParameter);
+            assert.equal('anotherValidParameter', parameters.anotherValidParameter);
+        });
+    });
+
+    describe('buildServices', function () {
+        it('should return an array of services', function () {
+            var loader = new JsonLoader(), services;
+
+            loader.addFile(require('./mock/secondValidConfig.js'));
+
+            services = loader.buildServices();
+            assert.equal(0, Object.keys(services).length);
+
+            loader.addFile(require('./mock/validConfig.js'));
+
+            services = loader.buildServices();
+            assert.equal(1, Object.keys(services).length);
+            assert.notEqual(undefined, services.validService);
+
+            loader.addFile(require('./mock/thirdValidConfig.js'));
+
+            services = loader.buildServices();
+            assert.equal(2, Object.keys(services).length);
+            assert.notEqual(undefined, services.secondValidService);
         });
     });
 });

@@ -1,6 +1,7 @@
 import ParameterBag from './ParameterBag';
 import Definition from './Definition';
 import Container from './Container';
+import AbstractLoader from './Loader/AbstractLoader';
 
 export default class ContainerBuilder {
     frozen = false;
@@ -16,6 +17,8 @@ export default class ContainerBuilder {
     constructor() {
         this.parameterBag = new ParameterBag([]);
         this.container    = new Container();
+
+        this.loaders = [];
     }
 
     isFrozen() {
@@ -26,7 +29,24 @@ export default class ContainerBuilder {
         this.frozen = true;
     }
 
+    addLoader(loader) {
+        if (!(loader instanceof AbstractLoader)) {
+            throw new Error("Must pass an instance of AbstractLoader");
+        }
+
+        this.loaders.push(loader);
+    }
+
     build() {
+        for (let index in this.loaders) {
+            if (!this.loaders.hasOwnProperty(index)) {
+                continue;
+            }
+
+            this.buildParametersFromJson(this.loaders[index].buildParameters());
+            this.buildServicesFromJson(this.loaders[index].buildServices());
+        }
+
         this.buildDefinitions();
 
         return this.container.build(this.services, this.parameterBag, this.tags);
@@ -125,11 +145,11 @@ export default class ContainerBuilder {
             }
 
             let arg = args[index];
-            if (arg === null || arg.$ref === undefined) {
+            if (!arg) {
                 continue;
             }
 
-            if (this.services[arg.$ref] === undefined) {
+            if (this.services[arg.replace('@', '')] === undefined) {
                 return false;
             }
         }
@@ -163,20 +183,21 @@ export default class ContainerBuilder {
 
                 return this.getParameter(name);
             }
-            if (arg === '$container') {
+
+            if (arg === '@container') {
                 return this.container;
             }
-        }
 
-        if (typeof arg === 'object' && arg !== null) {
-            if (arg.$ref !== undefined) {
-                if (typeof arg.$ref === 'string') {
-                    return this.services[arg.$ref];
-                } else {
-                    return arg.$ref;
+            if (arg.indexOf('@') === 0) {
+                let name = arg.replace('@', '');
+                if (name === 'container') {
+                    return this;
+                }
+
+                if (!this.hasService(name)) {
+                    throw new Error("Service doesn't exist: " + name);
                 }
             }
-
         }
 
         return arg;
@@ -252,14 +273,18 @@ export default class ContainerBuilder {
     }
 
     getService(id) {
-        if (!this.isFrozen()) {
-            throw new Error("Cannot grab services when the container isn't built");
-        }
-
         return this.services[id];
+    }
+
+    hasService(id) {
+        return this.services[id] !== undefined;
     }
 
     get(id) {
         return this.getService(id);
+    }
+
+    has(id) {
+        return this.hasService(id);
     }
 }

@@ -25,6 +25,10 @@ var _Container = require('./Container');
 
 var _Container2 = _interopRequireDefault(_Container);
 
+var _LoaderAbstractLoader = require('./Loader/AbstractLoader');
+
+var _LoaderAbstractLoader2 = _interopRequireDefault(_LoaderAbstractLoader);
+
 var ContainerBuilder = (function () {
     function ContainerBuilder() {
         _classCallCheck(this, ContainerBuilder);
@@ -37,6 +41,8 @@ var ContainerBuilder = (function () {
 
         this.parameterBag = new _ParameterBag2['default']([]);
         this.container = new _Container2['default']();
+
+        this.loaders = [];
     }
 
     _createClass(ContainerBuilder, [{
@@ -50,8 +56,26 @@ var ContainerBuilder = (function () {
             this.frozen = true;
         }
     }, {
+        key: 'addLoader',
+        value: function addLoader(loader) {
+            if (!(loader instanceof _LoaderAbstractLoader2['default'])) {
+                throw new Error("Must pass an instance of AbstractLoader");
+            }
+
+            this.loaders.push(loader);
+        }
+    }, {
         key: 'build',
         value: function build() {
+            for (var _index in this.loaders) {
+                if (!this.loaders.hasOwnProperty(_index)) {
+                    continue;
+                }
+
+                this.buildParametersFromJson(this.loaders[_index].buildParameters());
+                this.buildServicesFromJson(this.loaders[_index].buildServices());
+            }
+
             this.buildDefinitions();
 
             return this.container.build(this.services, this.parameterBag, this.tags);
@@ -77,8 +101,8 @@ var ContainerBuilder = (function () {
                     throw Error("Circular reference detected");
                 }
 
-                for (var _index in definitions) {
-                    var data = definitions[_index],
+                for (var _index2 in definitions) {
+                    var data = definitions[_index2],
                         _name2 = data.name,
                         definition = data.definition;
 
@@ -93,7 +117,7 @@ var ContainerBuilder = (function () {
 
                         this.addTags(_name2, definition.tags);
 
-                        definitions.splice(_index, 1);
+                        definitions.splice(_index2, 1);
                     }
                 }
 
@@ -105,12 +129,12 @@ var ContainerBuilder = (function () {
     }, {
         key: 'addTags',
         value: function addTags(serviceName, tags) {
-            for (var _index2 in tags) {
-                if (!tags.hasOwnProperty(_index2)) {
+            for (var _index3 in tags) {
+                if (!tags.hasOwnProperty(_index3)) {
                     continue;
                 }
 
-                var tag = tags[_index2];
+                var tag = tags[_index3];
 
                 if (this.tags[tag] === undefined) {
                     this.tags[tag] = [];
@@ -127,17 +151,17 @@ var ContainerBuilder = (function () {
             }
 
             var args = definition.classArguments;
-            for (var _index3 in args) {
-                if (!args.hasOwnProperty(_index3)) {
+            for (var _index4 in args) {
+                if (!args.hasOwnProperty(_index4)) {
                     continue;
                 }
 
-                var arg = args[_index3];
-                if (arg === null || arg.$ref === undefined) {
+                var arg = args[_index4];
+                if (!arg) {
                     continue;
                 }
 
-                if (this.services[arg.$ref] === undefined) {
+                if (this.services[arg.replace('@', '')] === undefined) {
                     return false;
                 }
             }
@@ -147,12 +171,12 @@ var ContainerBuilder = (function () {
     }, {
         key: 'prepareArguments',
         value: function prepareArguments(args) {
-            for (var _index4 in args) {
-                if (!args.hasOwnProperty(_index4)) {
+            for (var _index5 in args) {
+                if (!args.hasOwnProperty(_index5)) {
                     continue;
                 }
 
-                args[_index4] = this.parseArgument(args[_index4]);
+                args[_index5] = this.parseArgument(args[_index5]);
             }
 
             return args;
@@ -173,17 +197,19 @@ var ContainerBuilder = (function () {
 
                     return this.getParameter(_name3);
                 }
-                if (arg === '$container') {
+
+                if (arg === '@container') {
                     return this.container;
                 }
-            }
 
-            if (typeof arg === 'object' && arg !== null) {
-                if (arg.$ref !== undefined) {
-                    if (typeof arg.$ref === 'string') {
-                        return this.services[arg.$ref];
-                    } else {
-                        return arg.$ref;
+                if (arg.indexOf('@') === 0) {
+                    var _name4 = arg.replace('@', '');
+                    if (_name4 === 'container') {
+                        return this;
+                    }
+
+                    if (!this.hasService(_name4)) {
+                        throw new Error("Service doesn't exist: " + _name4);
                     }
                 }
             }
@@ -211,19 +237,19 @@ var ContainerBuilder = (function () {
     }, {
         key: 'buildServicesFromJson',
         value: function buildServicesFromJson(services) {
-            for (var _name4 in services) {
-                if (!services.hasOwnProperty(_name4)) {
+            for (var _name5 in services) {
+                if (!services.hasOwnProperty(_name5)) {
                     continue;
                 }
 
-                var info = services[_name4];
+                var info = services[_name5];
                 if (info.reference !== undefined) {
-                    this.services[_name4] = info.reference;
+                    this.services[_name5] = info.reference;
                     continue;
                 }
 
                 if (info.module !== undefined) {
-                    this.setDefinition(_name4, new _Definition2['default'](info.module, info.args, info.tags));
+                    this.setDefinition(_name5, new _Definition2['default'](info.module, info.args, info.tags));
                 }
             }
         }
@@ -273,16 +299,22 @@ var ContainerBuilder = (function () {
     }, {
         key: 'getService',
         value: function getService(id) {
-            if (!this.isFrozen()) {
-                throw new Error("Cannot grab services when the container isn't built");
-            }
-
             return this.services[id];
+        }
+    }, {
+        key: 'hasService',
+        value: function hasService(id) {
+            return this.services[id] !== undefined;
         }
     }, {
         key: 'get',
         value: function get(id) {
             return this.getService(id);
+        }
+    }, {
+        key: 'has',
+        value: function has(id) {
+            return this.hasService(id);
         }
     }], [{
         key: 'buildFromJson',

@@ -10,12 +10,12 @@ exports['default'] = {
             module: require('./ValidService')
         },
         firstInvalidService:  {
-            module:    require('./FirstInvalidService'),
-            args: [{$ref: 'secondInvalidService'}]
+            module: require('./FirstInvalidService'),
+            args:   ['@secondInvalidService']
         },
         secondInvalidService: {
-            module:    require('./SecondInvalidService'),
-            args: [{$ref: 'firstInvalidService'}]
+            module: require('./SecondInvalidService'),
+            args:   ['@firstInvalidService']
         }
     }
 };

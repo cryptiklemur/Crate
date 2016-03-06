@@ -4,11 +4,8 @@ Object.defineProperty(exports, '__esModule', {
     value: true
 });
 exports['default'] = {
-    parameters: {},
-    services:   {
-        validService: {
-            module: require('./ValidService')
-        }
+    parameters: {
+        validParameter: 'validParameter'
     }
 };
 module.exports     = exports['default'];
