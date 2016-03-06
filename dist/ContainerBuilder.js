@@ -95,12 +95,16 @@ var ContainerBuilder = (function () {
                 }
             }
 
-            var loops = 0;
+            var loops = 0,
+                removed = 0;
             while (definitions.length > 0) {
-                if (loops >= 50) {
-                    throw Error("Circular reference detected");
+                if (loops >= 50 && removed === 0) {
+                    throw new Error("Possible circular reference detected: Check the service definition for: " + JSON.stringify(definitions.map(function (definition) {
+                        return definition.name;
+                    })));
                 }
 
+                removed = 0;
                 for (var _index2 in definitions) {
                     var data = definitions[_index2],
                         _name2 = data.name,
@@ -118,6 +122,7 @@ var ContainerBuilder = (function () {
                         this.addTags(_name2, definition.tags);
 
                         definitions.splice(_index2, 1);
+                        removed++;
                     }
                 }
 

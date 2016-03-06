@@ -83,12 +83,16 @@ export default class ContainerBuilder {
             }
         }
 
-        let loops = 0;
+        let loops = 0, removed = 0;
         while (definitions.length > 0) {
-            if (loops >= 50) {
-                throw Error("Circular reference detected");
+            if (loops >= 50 && removed === 0) {
+                throw new Error(
+                    "Possible circular reference detected: Check the service definition for: " +
+                        JSON.stringify(definitions.map(definition => definition.name))
+                );
             }
 
+            removed = 0;
             for (let index in definitions) {
                 let data       = definitions[index],
                     name       = data.name,
@@ -108,6 +112,7 @@ export default class ContainerBuilder {
                     this.addTags(name, definition.tags);
 
                     definitions.splice(index, 1);
+                    removed++;
                 }
             }
 
