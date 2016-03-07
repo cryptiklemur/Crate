@@ -88,7 +88,7 @@ export default class ContainerBuilder {
             if (loops >= 150 && removed === 0) {
                 throw new Error(
                     "Possible circular reference detected: Check the service definition for: " +
-                        JSON.stringify(definitions.map(definition => definition.name))
+                    JSON.stringify(definitions.map(definition => definition.name))
                 );
             }
 
@@ -158,11 +158,11 @@ export default class ContainerBuilder {
                 continue;
             }
 
-            if (this.isServiceReference(arg) && this.services[arg.replace('@', '')] === undefined) {
+            if (this.isServiceReference(arg) && !this.hasService(arg.replace('@', ''))) {
                 return false;
             }
 
-            if (this.isParameterReference(arg) && this.parameters[arg.substring(1).slice(0, -1)] === undefined) {
+            if (this.isParameterReference(arg) && !this.parameterBag.has(arg.substring(1).slice(0, -1))) {
                 return false;
             }
         }
@@ -209,7 +209,7 @@ export default class ContainerBuilder {
                 return this.container;
             }
 
-            if (this.isServiceReference()) {
+            if (this.isServiceReference(arg)) {
                 let name = arg.replace('@', '');
                 if (name === 'container') {
                     return this;

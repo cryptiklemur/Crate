@@ -98,7 +98,7 @@ var ContainerBuilder = (function () {
             var loops = 0,
                 removed = 0;
             while (definitions.length > 0) {
-                if (loops >= 50 && removed === 0) {
+                if (loops >= 150 && removed === 0) {
                     throw new Error("Possible circular reference detected: Check the service definition for: " + JSON.stringify(definitions.map(function (definition) {
                         return definition.name;
                     })));
@@ -106,6 +106,10 @@ var ContainerBuilder = (function () {
 
                 removed = 0;
                 for (var _index2 in definitions) {
+                    if (!definitions.hasOwnProperty(_index2)) {
+                        continue;
+                    }
+
                     var data = definitions[_index2],
                         _name2 = data.name,
                         definition = data.definition;
@@ -166,12 +170,26 @@ var ContainerBuilder = (function () {
                     continue;
                 }
 
-                if (this.services[arg.replace('@', '')] === undefined) {
+                if (this.isServiceReference(arg) && !this.hasService(arg.replace('@', ''))) {
+                    return false;
+                }
+
+                if (this.isParameterReference(arg) && !this.parameterBag.has(arg.substring(1).slice(0, -1))) {
                     return false;
                 }
             }
 
             return true;
+        }
+    }, {
+        key: 'isServiceReference',
+        value: function isServiceReference(arg) {
+            return arg.indexOf('@') === 0;
+        }
+    }, {
+        key: 'isParameterReference',
+        value: function isParameterReference(arg) {
+            return arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2;
         }
     }, {
         key: 'prepareArguments',
@@ -194,7 +212,7 @@ var ContainerBuilder = (function () {
             }
 
             if (typeof arg === 'string') {
-                if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
+                if (this.isParameterReference(arg)) {
                     var _name3 = arg.substring(1).slice(0, -1);
                     if (!this.hasParameter(_name3)) {
                         throw new Error("Parameter doesn't exist: " + _name3);
@@ -207,7 +225,7 @@ var ContainerBuilder = (function () {
                     return this.container;
                 }
 
-                if (arg.indexOf('@') === 0) {
+                if (this.isServiceReference(arg)) {
                     var _name4 = arg.replace('@', '');
                     if (_name4 === 'container') {
                         return this;

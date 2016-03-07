@@ -9,7 +9,8 @@ exports['default'] = {
     },
     services: {
         secondValidService: {
-            module: require('./SecondValidService')
+            module: require('./SecondValidService'),
+            args: ['%anotherValidParameter%', '@validService']
         }
     }
 };
