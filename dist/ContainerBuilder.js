@@ -234,6 +234,8 @@ var ContainerBuilder = (function () {
                     if (!this.hasService(_name4)) {
                         throw new Error("Service doesn't exist: " + _name4);
                     }
+
+                    return this.getService(_name4);
                 }
             }
 

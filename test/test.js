@@ -224,6 +224,7 @@ describe("Ensure ContainerBuilder class works.", function () {
             assert.equal('secondValidService', container.get('secondValidService').name);
             assert.equal('validParameter', container.getParameter('validParameter'));
             assert.equal('anotherValidParameter', container.getParameter('anotherValidParameter'));
+            assert.equal(true, container.get('validService') instanceof validService);
         });
     });
 

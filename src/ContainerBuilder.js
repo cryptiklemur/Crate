@@ -218,6 +218,8 @@ export default class ContainerBuilder {
                 if (!this.hasService(name)) {
                     throw new Error("Service doesn't exist: " + name);
                 }
+
+                return this.getService(name);
             }
         }
 
