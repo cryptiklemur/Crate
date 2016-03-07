@@ -158,6 +158,10 @@ export default class ContainerBuilder {
                 continue;
             }
 
+            if (this.isServiceReference(arg) && arg === '@container') {
+                continue;
+            }
+
             if (this.isServiceReference(arg) && !this.hasService(arg.replace('@', ''))) {
                 return false;
             }
