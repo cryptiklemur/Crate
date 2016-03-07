@@ -94,6 +94,10 @@ export default class ContainerBuilder {
 
             removed = 0;
             for (let index in definitions) {
+                if (!definitions.hasOwnProperty(index)) {
+                    continue;
+                }
+
                 let data       = definitions[index],
                     name       = data.name,
                     definition = data.definition;
@@ -154,12 +158,24 @@ export default class ContainerBuilder {
                 continue;
             }
 
-            if (this.services[arg.replace('@', '')] === undefined) {
+            if (this.isServiceReference(arg) && this.services[arg.replace('@', '')] === undefined) {
+                return false;
+            }
+
+            if (this.isParameterReference(arg) && this.parameters[arg.substring(1).slice(0, -1)] === undefined) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    isServiceReference(arg) {
+        return arg.indexOf('@') === 0;
+    }
+
+    isParameterReference(arg) {
+        return arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2;
     }
 
     prepareArguments(args) {
@@ -180,7 +196,7 @@ export default class ContainerBuilder {
         }
 
         if (typeof arg === 'string') {
-            if (arg.indexOf('%') === 0 && arg.substring(1).indexOf('%') === arg.length - 2) {
+            if (this.isParameterReference(arg)) {
                 let name = arg.substring(1).slice(0, -1);
                 if (!this.hasParameter(name)) {
                     throw new Error("Parameter doesn't exist: " + name);
@@ -193,7 +209,7 @@ export default class ContainerBuilder {
                 return this.container;
             }
 
-            if (arg.indexOf('@') === 0) {
+            if (this.isServiceReference()) {
                 let name = arg.replace('@', '');
                 if (name === 'container') {
                     return this;
