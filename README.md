@@ -8,16 +8,6 @@ Crate is loosely inspired by the Symfony Framework's DependencyInjection compone
 that allows you to build a container, for your dependencies. It lets you create your container using either a json config, or 
 by hand.
 
-### Install
+### Documentation
 
-Install with NPM
-
-```
-npm install --save crate-js
-```
-
-Then just require it.
-
-### Usage
-
-##### Todo 
+Head over to the [Documentation](https://crate-js.readme.io)!
