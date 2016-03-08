@@ -1,4 +1,4 @@
-# Crate
+# Crate [![Build Status](https://travis-ci.org/aequasi/Crate.svg?branch=master)](https://travis-ci.org/aequasi/Crate)
 Javascript IOC Container
 
 
