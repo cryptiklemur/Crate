@@ -9,7 +9,7 @@
     "url": "https://www.github.com/aequasi/crate"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha test/test.js"
   },
   "license": "MIT",
   "devDependencies": {
