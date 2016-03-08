@@ -5,7 +5,7 @@ const assert              = require('assert'),
       AbstractLoader      = require('../dist/Loader/AbstractLoader'),
       JsonLoader          = require('../dist/Loader/JsonLoader'),
       validService        = require('./mock/ValidService'),
-      firstInvalidService = require('./mock/firstInvalidService');
+      firstInvalidService = require('./mock/FirstInvalidService');
 
 describe("Ensure Definition class works.", function () {
     describe("#constructor", function () {
