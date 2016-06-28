@@ -14,9 +14,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _extend = require('extend');
+var _util = require('util');
 
-var _extend2 = _interopRequireDefault(_extend);
+var _util2 = _interopRequireDefault(_util);
 
 var _AbstractLoader2 = require('./AbstractLoader');
 
@@ -42,7 +42,7 @@ var JsonLoader = (function (_AbstractLoader) {
             var parameters = [];
             for (var index in this.files) {
                 if (this.files.hasOwnProperty(index)) {
-                    parameters = (0, _extend2['default'])(true, parameters, this.files[index].parameters);
+                    parameters = _util2['default']._extend(parameters, this.files[index].parameters);
                 }
             }
 
@@ -54,7 +54,7 @@ var JsonLoader = (function (_AbstractLoader) {
             var services = [];
             for (var index in this.files) {
                 if (this.files.hasOwnProperty(index)) {
-                    services = (0, _extend2['default'])(true, services, this.files[index].services);
+                    services = _util2['default']._extend(services, this.files[index].services);
                 }
             }
 
