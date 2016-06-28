@@ -1,4 +1,3 @@
-import util from 'util';
 import AbstractLoader from './AbstractLoader';
 
 export default class JsonLoader extends AbstractLoader {
@@ -10,7 +9,7 @@ export default class JsonLoader extends AbstractLoader {
         let parameters = [];
         for (let index in this.files) {
             if (this.files.hasOwnProperty(index)) {
-                parameters = util._extend(parameters, this.files[index].parameters);
+                Object.assign(parameters, this.files[index].parameters);
             }
         }
 
@@ -21,7 +20,7 @@ export default class JsonLoader extends AbstractLoader {
         let services = [];
         for (let index in this.files) {
             if (this.files.hasOwnProperty(index)) {
-                services = util._extend(services, this.files[index].services);
+                Object.assign(services, this.files[index].services);
             }
         }
 
